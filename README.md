@@ -55,7 +55,5 @@ The goal is to:
 ---
 
 ## Challenges and Decisions
-
-- **Outlier handling in RNN:** When a test point falls outside the specified radius, sklearn raises an error by default. This was handled by setting `outlier_label=-1` and excluding those points from the accuracy calculation, which is a fair approach since the model effectively abstains on those samples.
 - **Feature scaling:** The Wine Dataset features vary widely in scale (e.g., alcohol ~11–14 vs. proline ~278–1680). Distance-based methods like KNN and RNN are sensitive to this. For this lab, raw features were used as instructed, but applying `StandardScaler` before fitting would likely improve both models' accuracy significantly.
 - **Radius value selection:** Choosing meaningful radius values required knowing the approximate scale of distances in the feature space. Values were selected (350–600) to ensure most test points had at least some neighbors while still observing variation in accuracy.
