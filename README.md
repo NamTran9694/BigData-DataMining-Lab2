@@ -62,8 +62,8 @@ The goal is to:
 
 ## Challenges and Decisions
 
-- **Feature scaling:** The Wine Dataset features vary dramatically in magnitude (e.g., alcohol ~11–14 vs. proline ~300–1700). Without scaling, high-magnitude features dominated Euclidean distance calculations. Applying `StandardScaler` after the train/test split resolved this and improved both models significantly.
-- **Preventing data leakage:** The scaler was fit exclusively on the training set using `fit_transform()`, then applied to the test set using `transform()` only. Fitting on the full dataset before splitting would leak test information into the model and produce artificially inflated accuracy.
+- **Feature scaling:** The Wine Dataset features vary dramatically in magnitude (e.g., alcohol ~11–14 vs. proline ~300–1700). Without scaling, high-magnitude features dominated Euclidean distance calculations. Applying StandardScale` after the train/test split resolved this and improved both models significantly.
+- **Preventing data leakage:** The scaler was fit exclusively on the training set using fit_transform(), then applied to the test set using transform() only. Fitting on the full dataset before splitting would leak test information into the model and produce artificially inflated accuracy.
 - **Radius value adjustment:** After scaling, the original radius values (350–600) were no longer meaningful since scaled features are bounded to roughly ±3. Radius values were adjusted to 1.0–3.5 to reflect the new feature space scale.
-- **Outlier handling in RNN:** `outlier_label=-1` was used to handle test points that fall outside the radius. Those points were excluded from the accuracy calculation since the model effectively abstains on them.
+- **Outlier handling in RNN:** outlier_label=-1 was used to handle test points that fall outside the radius. Those points were excluded from the accuracy calculation since the model effectively abstains on them.
 
