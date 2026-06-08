@@ -2,7 +2,7 @@
 
 **Course:** Advanced Big Data and Data Mining (MSCS-634-M20)
 **Student:** Hoai Nam Tran  
-**Lab:** Lab 2 – Classification Using KNN and RNN Algorithms
+**Lab 2:**  – Classification Using KNN and RNN Algorithms
 
 ---
 
