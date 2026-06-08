@@ -8,7 +8,7 @@
 
 ## Purpose
 
-This lab explores the performance of two distance-based classifiers — **K-Nearest Neighbors (KNN)** and **Radius Neighbors (RNN)** — applied to the Wine Dataset from sklearn. The Wine Dataset contains 178 samples across 3 wine classes, described by 13 chemical features (e.g., alcohol content, color intensity, flavanoids).
+This lab explores the performance of two distance-based classifiers, **K-Nearest Neighbors (KNN)** and **Radius Neighbors (RNN)**, applied to the Wine Dataset from sklearn. The Wine Dataset contains 178 samples across 3 wine classes, described by 13 chemical features (e.g., alcohol content, color intensity, flavanoids).
 
 The goal is to:
 - Understand how parameter choices (k for KNN, radius for RNN) affect classification accuracy
@@ -20,7 +20,7 @@ The goal is to:
 ## Key Insights
 
 ### Effect of StandardScaler
-`StandardScaler` was applied after the train/test split to transform all features to mean=0 and std=1. This is critical for distance-based models — without scaling, high-magnitude features like proline (range ~300–1700) dominate distance calculations over low-magnitude features like alcohol (range ~11–14). Scaling brought both models' accuracy from the 72–78% range up to 97–100%.
+StandardScaler was applied after the train/test split to transform all features to mean=0 and std=1. This is critical for distance-based models, without scaling, high-magnitude features like proline (range ~300–1700) dominate distance calculations over low-magnitude features like alcohol (range ~11–14). Scaling brought both models' accuracy from the 72–78% range up to 97–100%.
 
 > The scaler was fit **only on the training set** and then applied to the test set to prevent data leakage.
 
@@ -35,7 +35,7 @@ The goal is to:
 | 21 | 0.9444 |
 
 - **Best performance: k=15** at 97.2% accuracy.
-- After scaling, larger k values performed better — the scaled feature space is clean enough that averaging over more neighbors smooths out noise without losing class distinction.
+- After scaling, larger k values performed better, the scaled feature space is clean enough that averaging over more neighbors smooths out noise without losing class distinction.
 - Scaling transformed accuracy from a peak of 77.8% (unscaled) to 97.2%.
 
 ### RNN (radius = 1.0, 1.5, 2.0, 2.5, 3.0, 3.5)
@@ -54,7 +54,7 @@ The goal is to:
 - Scaling transformed accuracy from a plateau of 72.2% (unscaled) to 100%.
 
 ### KNN vs RNN Comparison
-- **RNN outperformed KNN** after scaling — 100% vs 97.2% at their best parameter values.
+- **RNN outperformed KNN** after scaling, 100% vs 97.2% at their best parameter values.
 - Both models improved dramatically with scaling, confirming that unscaled feature magnitudes were the primary bottleneck.
 - KNN remained more consistent across all parameter choices, while RNN was more sensitive but hit a higher peak at the right radius.
 
