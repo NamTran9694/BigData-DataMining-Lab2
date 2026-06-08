@@ -19,41 +19,51 @@ The goal is to:
 
 ## Key Insights
 
+### Effect of StandardScaler
+`StandardScaler` was applied after the train/test split to transform all features to mean=0 and std=1. This is critical for distance-based models — without scaling, high-magnitude features like proline (range ~300–1700) dominate distance calculations over low-magnitude features like alcohol (range ~11–14). Scaling brought both models' accuracy from the 72–78% range up to 97–100%.
+
+> The scaler was fit **only on the training set** and then applied to the test set to prevent data leakage.
+
 ### KNN (k = 1, 5, 11, 15, 21)
 
 | k | Test Accuracy |
 |---|--------------|
-| 1 | 0.778 |
-| 5 | 0.722 |
-| 11 | 0.750 |
-| 15 | 0.750 |
-| 21 | **0.778** |
+| 1 | 0.9444 |
+| 5 | 0.9444 |
+| 11 | 0.9444 |
+| 15 | **0.9722** |
+| 21 | 0.9444 |
 
-- **Best performance: k=1 and k=21**, both achieving 77.8% accuracy.
-- Accuracy showed a U-shaped trend — dipping at k=5 (lowest at 72.2%) before recovering at larger k values. This suggests the Wine Dataset has both local class structure (favoring small k) and enough global separation (favoring larger k).
-- k=1 performed surprisingly well because the Wine classes are fairly well separated in feature space, meaning the single nearest neighbor is usually correct.
+- **Best performance: k=15** at 97.2% accuracy.
+- After scaling, larger k values performed better — the scaled feature space is clean enough that averaging over more neighbors smooths out noise without losing class distinction.
+- Scaling transformed accuracy from a peak of 77.8% (unscaled) to 97.2%.
 
-### RNN (radius = 350, 400, 450, 500, 550, 600)
+### RNN (radius = 1.0, 1.5, 2.0, 2.5, 3.0, 3.5)
 
 | Radius | Test Accuracy |
 |--------|--------------|
-| 350 | **0.750** |
-| 400 | 0.722 |
-| 450 | 0.722 |
-| 500 | 0.722 |
-| 550 | 0.722 |
-| 600 | 0.722 |
+| 1.0 | 0.0000 |
+| 1.5 | **1.0000** |
+| 2.0 | 1.0000 |
+| 2.5 | 0.9714 |
+| 3.0 | 0.9444 |
+| 3.5 | 0.9722 |
 
-- **Best performance: radius=350** at 75.0%.
-- Accuracy flatlined from radius 400 onward at 72.2%, indicating that larger radii pull in too many neighbors and dilute class-specific information.
-- The flat trend suggests all radii ≥ 400 are capturing a similar large neighborhood, making the classifier increasingly coarse.
+- **Best performance: radius=1.5** achieving a perfect **100% accuracy**.
+- After scaling, radius values were adjusted to the 1.0–3.5 range (since scaled features now lie in ~-3 to +3), which revealed much more meaningful variation across radius values.
+- Scaling transformed accuracy from a plateau of 72.2% (unscaled) to 100%.
 
 ### KNN vs RNN Comparison
-- **KNN outperformed RNN overall** — peak accuracy 77.8% vs 75.0%.
-- KNN was more stable across parameter choices, while RNN quickly plateaued after radius 350.
-- The overall accuracy range of 72–78% for both models is likely due to unscaled features. The Wine Dataset features vary dramatically in magnitude (e.g., alcohol ~11–14 vs. proline ~300–1700), which distorts distance calculations in favor of high-magnitude features. Applying `StandardScaler` before fitting would likely push both models well above 90%.
+- **RNN outperformed KNN** after scaling — 100% vs 97.2% at their best parameter values.
+- Both models improved dramatically with scaling, confirming that unscaled feature magnitudes were the primary bottleneck.
+- KNN remained more consistent across all parameter choices, while RNN was more sensitive but hit a higher peak at the right radius.
+
 ---
 
 ## Challenges and Decisions
-- **Feature scaling:** The Wine Dataset features vary widely in scale (e.g., alcohol ~11–14 vs. proline ~278–1680). Distance-based methods like KNN and RNN are sensitive to this. For this lab, raw features were used as instructed, but applying `StandardScaler` before fitting would likely improve both models' accuracy significantly.
-- **Radius value selection:** Choosing meaningful radius values required knowing the approximate scale of distances in the feature space. Values were selected (350–600) to ensure most test points had at least some neighbors while still observing variation in accuracy.
+
+- **Feature scaling:** The Wine Dataset features vary dramatically in magnitude (e.g., alcohol ~11–14 vs. proline ~300–1700). Without scaling, high-magnitude features dominated Euclidean distance calculations. Applying `StandardScaler` after the train/test split resolved this and improved both models significantly.
+- **Preventing data leakage:** The scaler was fit exclusively on the training set using `fit_transform()`, then applied to the test set using `transform()` only. Fitting on the full dataset before splitting would leak test information into the model and produce artificially inflated accuracy.
+- **Radius value adjustment:** After scaling, the original radius values (350–600) were no longer meaningful since scaled features are bounded to roughly ±3. Radius values were adjusted to 1.0–3.5 to reflect the new feature space scale.
+- **Outlier handling in RNN:** `outlier_label=-1` was used to handle test points that fall outside the radius. Those points were excluded from the accuracy calculation since the model effectively abstains on them.
+
